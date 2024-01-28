@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import blogController from './Controllers/blogController.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -24,6 +25,9 @@ db.on('error', (error) => {
 db.once('open', () => {
   console.log('Connected to MongoDB');
 });
+
+// Use the usersController
+app.use('/api', blogController);
 
 app.get('/', (req, res) => {
   try {
