@@ -31,15 +31,14 @@ router.get('/blogs/:blogId', async (req, res) => {
 
 router.post('/blogs', async (req, res) => {
     try {
-        const { userId, id, title, body } = req.body;
-
+        const { userId, title, body } = req.body;
+        
         const newBlog = new Blog({
             userId,
-            id,
             title,
             body
         });
-
+        
         const savedBlog = await newBlog.save();
 
         res.status(201).json({ success: true, message: 'Blog created successfully.', data: savedBlog });
@@ -51,10 +50,10 @@ router.post('/blogs', async (req, res) => {
 
 router.put('/blogs/:blogId', async (req, res) => {
     try {
-        const { userId, id, title, body } = req.body;
+        const { userId, title, body } = req.body;
         const blogId = req.params.blogId;
 
-        const updatedBlog = await Blog.findByIdAndUpdate(blogId, { userId, id, title, body }, { new: true });
+        const updatedBlog = await Blog.findByIdAndUpdate(blogId, { userId, title, body }, { new: true });
 
         if (!updatedBlog) {
             return res.status(404).json({ success: false, message: 'Blog not found.' });
@@ -67,19 +66,20 @@ router.put('/blogs/:blogId', async (req, res) => {
     }
 });
 
-router.delete('/blogs/:blogId', async (req, res) => {
+router.delete('/blogs/:id', async (req, res) => {
     try {
-        const blogId = req.params.blogId;
+        const blogId = req.params.id;
 
-        const deletedBlog = await Blog.findByIdAndDelete(blogId);
-
-        if (!deletedBlog) {
+        const blog = await Blog.findById(blogId);
+        if (!blog) {
             return res.status(404).json({ success: false, message: 'Blog not found.' });
         }
 
-        res.json({ success: true, message: 'Blog deleted successfully.', data: deletedBlog });
+        await Blog.findByIdAndDelete(blogId);
+        
+        res.json({ success: true, message: 'Blog deleted successfully.' });
     } catch (error) {
-        console.error(error);
+        console.error('Error deleting blog:', error);
         res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 });
