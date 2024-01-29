@@ -3,6 +3,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import blogController from './Controllers/blogController.js';
+import commentController from './Controllers/commentController.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -28,6 +29,7 @@ db.once('open', () => {
 
 // Use the usersController
 app.use('/api', blogController);
+app.use('/api', commentController);
 
 app.get('/', (req, res) => {
   try {
